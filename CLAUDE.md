@@ -29,7 +29,9 @@ No build, lint, or test tooling. To view: `open index.html`.
 
 ## Git
 
-Local repo with branches `main` and `dev`, remote on GitHub (`origin`). Push `dev` after committing.
+Local repo with branches `main` and `dev`, remote on GitHub (`origin`, public). Push `dev` after committing.
+
+GitHub Pages serves `main` (root) at https://yossitamim.github.io/newwebsite/ — anything merged to `main` goes live.
 
 ## Documentation (Obsidian)
 
