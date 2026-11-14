@@ -12,7 +12,8 @@ No build, lint, or test tooling. To view: `open index.html`.
 
 ## Architecture
 
-- Everything is in a single `index.html` with an inline `<style>`; no JS, no dependencies. Only external resource is the Heebo font from Google Fonts.
+- Everything is in a single `index.html` with an inline `<style>` and one inline `<script>` at the end of body; no dependencies. Only external resource is the Heebo font from Google Fonts.
+- The script drives the hero effects: a canvas "agent network" (node positions are fractions of the hero size, placed to stay clear of the console card; hidden under 720px) and a typing `agents.run` console. Both honor `prefers-reduced-motion`. DOM is built with `textContent` only — keep it that way.
 - Page is Hebrew, RTL (`lang="he" dir="rtl"`). Use logical CSS properties (`margin-inline-start`, etc.) and keep RTL in mind for any layout change.
 - Colors and sizes are CSS custom properties on `:root`; change theme there.
 - Sections are anchored by id (`#what`, `#syllabus`, `#team`, `#faq`, `#signup`) and linked from the sticky nav; keep the nav in sync when adding/removing sections.
