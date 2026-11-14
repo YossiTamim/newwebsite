@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>מפתחי AI 16 | האוניברסיטה העברית</title>
+  <meta name="description" content="קורס מפתחי AI – מחזור 16 באוניברסיטה העברית. לומדים לבנות מוצרים אמיתיים עם מודלי שפה, סוכנים ו-RAG.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b1020;
+      --surface: #131a2e;
+      --border: #24304f;
+      --text: #e8ecf6;
+      --muted: #a3adc6;
+      --accent: #6ea8ff;
+      --accent-2: #a78bfa;
+      --radius: 14px;
+      --max: 1100px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Heebo", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+    a { color: var(--accent); }
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+    section { padding: 80px 0; }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 16px; }
+    h2 { font-size: clamp(1.7rem, 3.5vw, 2.3rem); }
+    .lead { color: var(--muted); font-size: 1.15rem; max-width: 640px; }
+
+    /* nav */
+    header.nav {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(11, 16, 32, .85);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    header.nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .logo { font-weight: 800; color: var(--text); text-decoration: none; }
+    .logo span { color: var(--accent); }
+    nav a { color: var(--muted); text-decoration: none; margin-inline-start: 22px; }
+    nav a:hover { color: var(--text); }
+    @media (max-width: 720px) { nav a:not(.btn) { display: none; } }
+
+    .btn {
+      display: inline-block; padding: 12px 26px; border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #0b1020; font-weight: 700; text-decoration: none;
+    }
+    nav .btn { padding: 8px 18px; color: #0b1020; }
+    .btn:hover { filter: brightness(1.1); }
+    .btn:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    .btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+
+    /* hero */
+    .hero {
+      padding: 110px 0 90px;
+      background:
+        radial-gradient(600px 300px at 80% 0%, rgba(110,168,255,.18), transparent),
+        radial-gradient(500px 300px at 10% 30%, rgba(167,139,250,.15), transparent);
+    }
+    .badge {
+      display: inline-block; padding: 4px 14px; border-radius: 999px;
+      border: 1px solid var(--border); color: var(--muted); font-size: .9rem; margin-bottom: 20px;
+    }
+    .hero h1 { font-size: clamp(2.2rem, 6vw, 3.8rem); font-weight: 800; }
+    .grad { background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .hero .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
+    .facts { display: flex; gap: 40px; flex-wrap: wrap; margin-top: 56px; color: var(--muted); }
+    .facts strong { display: block; color: var(--text); font-size: 1.5rem; }
+
+    /* cards */
+    .grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 40px; }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 26px;
+    }
+    .card .icon { font-size: 1.8rem; margin-bottom: 8px; }
+    .card p { color: var(--muted); margin: 0; }
+
+    /* syllabus */
+    .alt { background: var(--surface); }
+    .modules { list-style: none; padding: 0; margin: 40px 0 0; counter-reset: m; }
+    .modules li {
+      counter-increment: m; position: relative;
+      padding: 20px 64px 20px 0; border-bottom: 1px solid var(--border);
+    }
+    .modules li::before {
+      content: counter(m, decimal-leading-zero); position: absolute; right: 0; top: 18px;
+      font-weight: 800; font-size: 1.4rem; color: var(--accent);
+    }
+    .modules h3 { margin: 0 0 4px; font-size: 1.15rem; }
+    .modules p { margin: 0; color: var(--muted); }
+
+    /* lecturers */
+    .person { text-align: center; }
+    .avatar {
+      width: 96px; height: 96px; border-radius: 50%; margin: 0 auto 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: grid; place-items: center; font-weight: 800; font-size: 1.6rem; color: #0b1020;
+    }
+
+    /* faq */
+    details {
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 18px 22px; margin-top: 12px;
+    }
+    summary { cursor: pointer; font-weight: 700; }
+    details p { color: var(--muted); margin: 12px 0 0; }
+
+    /* cta */
+    .cta { text-align: center; }
+    .cta .lead { margin: 0 auto 28px; }
+
+    footer { border-top: 1px solid var(--border); padding: 28px 0; color: var(--muted); font-size: .9rem; text-align: center; }
+  </style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="#top">מפתחי <span>AI</span> 16</a>
+    <nav aria-label="ניווט ראשי">
+      <a href="#what">מה לומדים</a>
+      <a href="#syllabus">סילבוס</a>
+      <a href="#team">מרצים</a>
+      <a href="#faq">שאלות נפוצות</a>
+      <a class="btn" href="#signup">להרשמה</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <span class="badge">האוניברסיטה העברית · מחזור 16</span>
+      <h1>הופכים מפתחים<br>ל<span class="grad">מפתחי AI</span></h1>
+      <p class="lead">קורס מעשי שבו בונים מוצרים אמיתיים עם מודלי שפה: סוכנים, RAG, אינטגרציות ופריסה לפרודקשן. מהרעיון ועד מוצר עובד.</p>
+      <div class="actions">
+        <a class="btn" href="#signup">להרשמה למחזור 16</a>
+        <a class="btn ghost" href="#syllabus">לסילבוס המלא</a>
+      </div>
+      <div class="facts">
+        <!-- TODO: לעדכן נתונים אמיתיים -->
+        <div><strong>XX שבועות</strong>משך הקורס</div>
+        <div><strong>X מפגשים</strong>בשבוע</div>
+        <div><strong>פרויקט גמר</strong>מוצר AI אמיתי</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="what">
+    <div class="wrap">
+      <h2>מה תדעו לעשות בסוף הקורס</h2>
+      <p class="lead">לא עוד הרצאות תיאורטיות. כל שבוע בונים משהו שעובד.</p>
+      <div class="grid">
+        <div class="card"><div class="icon" aria-hidden="true">🧠</div><h3>לעבוד עם LLMs</h3><p>הנדסת פרומפטים, עבודה עם APIs של מודלים מובילים ובחירת מודל נכון למשימה.</p></div>
+        <div class="card"><div class="icon" aria-hidden="true">🤖</div><h3>לבנות סוכנים</h3><p>סוכנים שמשתמשים בכלים, מתכננים ומבצעים משימות מרובות שלבים.</p></div>
+        <div class="card"><div class="icon" aria-hidden="true">📚</div><h3>RAG ונתונים</h3><p>חיבור מודלים לידע של הארגון: embeddings, מאגרי וקטורים וחיפוש סמנטי.</p></div>
+        <div class="card"><div class="icon" aria-hidden="true">🚀</div><h3>לעלות לאוויר</h3><p>פריסה, ניטור, הערכת איכות (evals) ושליטה בעלויות במוצר אמיתי.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="syllabus" class="alt">
+    <div class="wrap">
+      <h2>מבנה הקורס</h2>
+      <p class="lead">TODO: להחליף בסילבוס האמיתי של מחזור 16.</p>
+      <ol class="modules">
+        <li><h3>יסודות ה-AI הגנרטיבי</h3><p>איך מודלי שפה עובדים, טוקנים, הקשר ומגבלות.</p></li>
+        <li><h3>פיתוח עם APIs של מודלים</h3><p>פרומפטים, פלט מובנה, סטרימינג וקריאה לכלים.</p></li>
+        <li><h3>RAG</h3><p>עיבוד מסמכים, embeddings ושליפה חכמה.</p></li>
+        <li><h3>סוכנים ואוטומציה</h3><p>תכנון סוכנים, MCP ועבודה עם כלים חיצוניים.</p></li>
+        <li><h3>איכות ופרודקשן</h3><p>Evals, אבטחה, עלויות ופריסה.</p></li>
+        <li><h3>פרויקט גמר</h3><p>בניית מוצר AI מקצה לקצה והצגתו.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="team">
+    <div class="wrap">
+      <h2>המרצים</h2>
+      <p class="lead">TODO: שמות, תפקידים ותמונות של צוות ההוראה.</p>
+      <div class="grid">
+        <div class="card person"><div class="avatar" aria-hidden="true">א</div><h3>שם המרצה</h3><p>תפקיד וניסיון בקצרה</p></div>
+        <div class="card person"><div class="avatar" aria-hidden="true">ב</div><h3>שם המרצה</h3><p>תפקיד וניסיון בקצרה</p></div>
+        <div class="card person"><div class="avatar" aria-hidden="true">ג</div><h3>שם המרצה</h3><p>תפקיד וניסיון בקצרה</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="alt">
+    <div class="wrap">
+      <h2>שאלות נפוצות</h2>
+      <!-- TODO: לאמת את התשובות מול פרטי הקורס -->
+      <details><summary>למי מתאים הקורס?</summary><p>למפתחים עם ניסיון בתכנות שרוצים להתמחות בבניית מוצרי AI.</p></details>
+      <details><summary>מה דרישות הקדם?</summary><p>היכרות עם שפת תכנות (רצוי Python) ועבודה בסיסית עם Git.</p></details>
+      <details><summary>מתי מתחיל המחזור?</summary><p>TODO: תאריך פתיחה.</p></details>
+      <details><summary>האם מקבלים תעודה?</summary><p>TODO: פרטי התעודה מהאוניברסיטה העברית.</p></details>
+      <details><summary>כמה עולה הקורס?</summary><p>TODO: מחיר ואפשרויות מימון.</p></details>
+    </div>
+  </section>
+
+  <section id="signup" class="cta">
+    <div class="wrap">
+      <h2>מוכנים להצטרף למחזור 16?</h2>
+      <p class="lead">מספר המקומות מוגבל. השאירו פרטים ונחזור אליכם עם כל המידע.</p>
+      <!-- TODO: להחליף בקישור לטופס ההרשמה האמיתי -->
+      <a class="btn" href="#">לטופס ההרשמה</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">© 2026 קורס מפתחי AI · מחזור 16 · האוניברסיטה העברית בירושלים</div>
+</footer>
+
+</body>
+</html>
