@@ -67,6 +67,25 @@
         radial-gradient(600px 300px at 80% 0%, rgba(110,168,255,.18), transparent),
         radial-gradient(500px 300px at 10% 30%, rgba(167,139,250,.15), transparent);
     }
+    .hero { position: relative; overflow: hidden; }
+    .hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .55; pointer-events: none; }
+    .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; align-items: center; }
+    @media (min-width: 900px) { .hero-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); } }
+    /* on phones the network would sit under the headline; the console carries the effect there */
+    @media (max-width: 720px) { .hero-bg { display: none; } }
+    .console { min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,.35); }
+    .console-head { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--border); font: .85rem ui-monospace, Menlo, monospace; color: var(--muted); }
+    .console-head i { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+    .console-head i:nth-child(1) { background: #ff5f57; } .console-head i:nth-child(2) { background: #febc2e; } .console-head i:nth-child(3) { background: #28c840; }
+    .console-head .live { margin-inline-start: auto; color: var(--text); }
+    .live::before { content: "●"; color: #28c840; margin-inline-end: 6px; animation: pulse 1.6s ease-in-out infinite; }
+    .console-body { min-height: 15rem; padding: 16px; font: .9rem/1.9 ui-monospace, Menlo, monospace; overflow: hidden; }
+    .console-body .tag { margin-inline-end: 8px; font-weight: 700; }
+    .cursor::after { content: "▍"; color: var(--accent); animation: blink 1s steps(1) infinite; }
+    @keyframes pulse { 50% { opacity: .25; } }
+    @keyframes blink { 50% { opacity: 0; } }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    @media (prefers-reduced-motion: reduce) { .live::before, .cursor::after { animation: none; } }
     .badge {
       display: inline-block; padding: 4px 14px; border-radius: 999px;
       border: 1px solid var(--border); color: var(--muted); font-size: .9rem; margin-bottom: 20px;
@@ -140,7 +159,9 @@
 
 <main id="top">
   <section class="hero">
-    <div class="wrap">
+    <canvas class="hero-bg" aria-hidden="true"></canvas>
+    <div class="wrap hero-grid">
+    <div class="hero-text">
       <span class="badge">האוניברסיטה העברית · מחזור 16</span>
       <h1>הופכים מפתחים<br>ל<span class="grad">מפתחי AI</span></h1>
       <p class="lead">קורס מעשי שבו בונים מוצרים אמיתיים עם מודלי שפה: סוכנים, RAG, אינטגרציות ופריסה לפרודקשן. מהרעיון ועד מוצר עובד.</p>
@@ -154,6 +175,12 @@
         <div><strong>X מפגשים</strong>בשבוע</div>
         <div><strong>פרויקט גמר</strong>מוצר AI אמיתי</div>
       </div>
+    </div>
+    <aside class="console">
+      <p class="sr-only">הדגמה: סוכני AI מתכננים, כותבים, בודקים ומעלים קוד</p>
+      <div class="console-head" aria-hidden="true"><i></i><i></i><i></i><span>agents.run</span><span class="live">5 סוכנים פעילים</span></div>
+      <div class="console-body" aria-hidden="true"></div>
+    </aside>
     </div>
   </section>
 
@@ -222,6 +249,116 @@
 <footer>
   <div class="wrap">© 2026 קורס מפתחי AI · מחזור 16 · האוניברסיטה העברית בירושלים</div>
 </footer>
+
+<script>
+(function () {
+  var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var hero = document.querySelector(".hero");
+
+  // Effect 1: agent network
+  var cv = hero.querySelector("canvas"), ctx = cv.getContext("2d");
+  // positions keep every node outside the console card on desktop
+  var nodes = [["Planner", .06, .14], ["Researcher", .26, .1], ["Coder", .3, .9], ["Tester", .1, .86], ["Deployer", .45, .84]];
+  var edges = [[0, 1], [1, 2], [2, 3], [3, 4], [0, 2], [1, 4], [4, 0]];
+  var packets = [], pulses = [], W, H, last = 0, raf, running = false;
+  var css = getComputedStyle(document.documentElement);
+  var cols = [css.getPropertyValue("--accent").trim(), css.getPropertyValue("--accent-2").trim()];
+  var pos = function (n) { return [nodes[n][1] * W, nodes[n][2] * H]; };
+
+  function spawn(from) {
+    var out = edges.map(function (e, i) { return from == null || e[0] === from ? i : -1; }).filter(function (i) { return i >= 0; });
+    packets.push({ e: out[Math.random() * out.length | 0], t: 0, c: cols[Math.random() * 2 | 0] });
+  }
+  function resize() {
+    var d = window.devicePixelRatio || 1;
+    W = cv.clientWidth; H = cv.clientHeight;
+    cv.width = W * d; cv.height = H * d;
+    ctx.setTransform(d, 0, 0, d, 0, 0);
+    if (!running) draw();
+  }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.lineWidth = 1; ctx.strokeStyle = css.getPropertyValue("--border").trim();
+    edges.forEach(function (e) {
+      var a = pos(e[0]), b = pos(e[1]);
+      ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+    });
+    pulses.forEach(function (p) {
+      var c = pos(p.n); ctx.globalAlpha = 1 - p.t;
+      ctx.strokeStyle = cols[0]; ctx.beginPath(); ctx.arc(c[0], c[1], 8 + p.t * 28, 0, 7); ctx.stroke();
+    });
+    ctx.globalAlpha = 1; ctx.font = "12px ui-monospace, Menlo, monospace"; ctx.textAlign = "center";
+    nodes.forEach(function (n, i) {
+      var c = pos(i);
+      ctx.fillStyle = css.getPropertyValue("--surface").trim(); ctx.strokeStyle = cols[1];
+      ctx.beginPath(); ctx.arc(c[0], c[1], 8, 0, 7); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = css.getPropertyValue("--muted").trim(); ctx.fillText(n[0], c[0], c[1] + 26);
+    });
+    packets.forEach(function (p) {
+      var a = pos(edges[p.e][0]), b = pos(edges[p.e][1]);
+      ctx.shadowColor = p.c; ctx.shadowBlur = 12; ctx.fillStyle = p.c;
+      ctx.beginPath(); ctx.arc(a[0] + (b[0] - a[0]) * p.t, a[1] + (b[1] - a[1]) * p.t, 3.5, 0, 7); ctx.fill();
+    });
+    ctx.shadowBlur = 0;
+  }
+  function tick(now) {
+    var dt = Math.min(now - last, 50); last = now;
+    packets.slice().forEach(function (p) {
+      p.t += dt / 1800;
+      if (p.t >= 1) {
+        var n = edges[p.e][1];
+        packets.splice(packets.indexOf(p), 1);
+        pulses.push({ n: n, t: 0 }); spawn(n);
+      }
+    });
+    if (packets.length < 4) spawn();
+    if (packets.length < 8 && Math.random() < .004) spawn();
+    pulses.forEach(function (p) { p.t += dt / 900; });
+    pulses = pulses.filter(function (p) { return p.t < 1; });
+    draw();
+    raf = requestAnimationFrame(tick);
+  }
+  window.addEventListener("resize", resize);
+  resize();
+  if (!still) {
+    for (var i = 0; i < 5; i++) spawn();
+    new IntersectionObserver(function (en) {
+      running = en[0].isIntersecting;
+      cancelAnimationFrame(raf);
+      if (running) { last = performance.now(); raf = requestAnimationFrame(tick); }
+    }).observe(cv); // a hidden canvas never intersects, so the loop stays off on phones
+  }
+
+  // Effect 2: typing console
+  var body = hero.querySelector(".console-body");
+  var lines = [
+    ["planner", "var(--accent)", "מפרק את המשימה ל-4 שלבים…"],
+    ["researcher", "var(--accent-2)", "שולף 12 מסמכים רלוונטיים (RAG)"],
+    ["coder", "#fbbf24", "כותב את שכבת ה-API…"],
+    ["tester", "#34d399", "✓ 24 בדיקות עברו"],
+    ["deployer", "#f472b6", "🚀 הגרסה עלתה לאוויר"]
+  ];
+  function row(l) {
+    var d = document.createElement("div"), t = document.createElement("span"), m = document.createElement("span");
+    d.dir = "rtl"; t.className = "tag"; t.style.color = l[1]; t.textContent = "[" + l[0] + "]";
+    d.append(t, m); body.append(d);
+    return [d, m];
+  }
+  function play(i) {
+    if (i === lines.length) return setTimeout(function () { body.textContent = ""; play(0); }, 2500);
+    var r = row(lines[i]), msg = lines[i][2], k = 0;
+    r[0].classList.add("cursor");
+    (function type() {
+      r[1].textContent = msg.slice(0, ++k);
+      if (k < msg.length) return setTimeout(type, 40);
+      r[0].classList.remove("cursor");
+      setTimeout(function () { play(i + 1); }, 500);
+    })();
+  }
+  if (still) lines.forEach(function (l) { row(l)[1].textContent = l[2]; });
+  else play(0);
+})();
+</script>
 
 </body>
 </html>
