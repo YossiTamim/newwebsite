@@ -30,6 +30,7 @@
     a { color: var(--accent); }
     .wrap { max-width: var(--max); margin-inline: auto; padding-inline: 20px; }
     section { padding-block: 80px; }
+    #top, section[id] { scroll-margin-top: var(--nav-h); }
     h1, h2, h3 { line-height: 1.25; margin: 0 0 16px; }
     h2 { font-size: clamp(1.7rem, 3.5vw, 2.3rem); }
     .lead { color: var(--muted); font-size: 1.15rem; max-width: 640px; }
@@ -150,7 +151,9 @@
         display: flex; align-items: center;
         padding-block: 32px;
       }
-      /* Pull the next heading up under the hero so it can fade in during the dive. */
+    }
+    /* Pins start at 721px, so this overlap is not active on the hamburger breakpoint. */
+    @media (min-width: 721px) {
       html.is-overlap #what {
         margin-top: -68vh;
         position: relative;
@@ -237,7 +240,7 @@
     .timeline-progress {
       display: block; width: 100%; height: 100%;
       background: linear-gradient(var(--accent), var(--accent-2));
-      transform: scaleY(1);
+      transform: scaleY(0);
       transform-origin: top center;
     }
     .modules { list-style: none; padding: 0; margin: 0; counter-reset: m; }
@@ -257,8 +260,13 @@
     .mod-glow {
       position: absolute; z-index: 0; pointer-events: none;
       inset-block: 8px; inset-inline-start: 52px; inset-inline-end: 0;
-      border-radius: 12px; opacity: 1;
+      border-radius: 12px; opacity: 0;
       background: linear-gradient(to left, rgba(110,168,255,.16), transparent 78%);
+    }
+    /* Finished line when the draw animation does not run. */
+    @media (prefers-reduced-motion: reduce), (max-width: 720px) {
+      .timeline-progress { transform: scaleY(1); }
+      .mod-glow { opacity: 1; }
     }
     .modules h3, .modules p { position: relative; z-index: 1; }
     .modules h3 { margin: 0 0 4px; font-size: 1.15rem; }
