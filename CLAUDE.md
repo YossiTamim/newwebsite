@@ -12,7 +12,7 @@ No build, lint, or test tooling. To view: `open index.html`.
 
 ## Architecture
 
-- The page is `index.html` with an inline `<style>` (CSP-hashed) and deferred local scripts: GSAP 3.15.1 in `vendor/gsap/` and `assets/js/main.js`. Heebo (weights 400, 700, 800, Hebrew and Latin) is self-hosted in `assets/fonts/` under the OFL. No CDN and no runtime network requests to other origins.
+- The page is `index.html` plus `assets/css/main.css` and deferred local scripts: GSAP 3.15.1 in `vendor/gsap/` and `assets/js/main.js`. Heebo (weights 400, 700, and 800, Hebrew and Latin) is self-hosted in `assets/fonts/` under the OFL. No CDN and no runtime network requests to other origins.
 - The script drives the hero effects: a canvas "agent network" (node positions are fractions of the hero size, placed to stay clear of the console card; hidden under 720px; nodes light one by one, then the console types) and a typing `agents.run` console. Both pause offscreen and honor `prefers-reduced-motion`. DOM is built with `textContent` only — keep it that way.
 - Sign-up hrefs come from one place: `<body data-signup-url>`. The script copies it onto every `a[data-signup]`.
 - `#team` and `a[data-nav-team]` stay in the markup but are hidden until `SHOW_LECTURERS` in the page script is set to `true`. Lecturer photos are `img.person-photo` (width, height, alt, loading=lazy); remove `hidden` and set `src` when a real photo exists.
