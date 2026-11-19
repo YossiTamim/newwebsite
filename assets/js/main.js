@@ -427,9 +427,18 @@
   });
 
   var motionReady = false;
+  var fallbackTimer = setTimeout(function () {
+    if (!motionReady) document.documentElement.classList.remove("js");
+  }, 1500);
   function bootMotion() {
-    if (motionReady || !window.gsap || !window.ScrollTrigger) return;
+    if (!window.gsap || !window.ScrollTrigger) {
+      clearTimeout(fallbackTimer);
+      document.documentElement.classList.remove("js");
+      return;
+    }
+    if (motionReady) return;
     motionReady = true;
+    clearTimeout(fallbackTimer);
     var gsap = window.gsap;
     var ScrollTrigger = window.ScrollTrigger;
     gsap.registerPlugin(ScrollTrigger);

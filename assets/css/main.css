@@ -240,7 +240,7 @@
     .timeline-progress {
       display: block; width: 100%; height: 100%;
       background: linear-gradient(var(--accent), var(--accent-2));
-      transform: scaleY(0);
+      transform: scaleY(1);
       transform-origin: top center;
     }
     .modules { list-style: none; padding: 0; margin: 0; counter-reset: m; }
@@ -260,13 +260,13 @@
     .mod-glow {
       position: absolute; z-index: 0; pointer-events: none;
       inset-block: 8px; inset-inline-start: 52px; inset-inline-end: 0;
-      border-radius: 12px; opacity: 0;
+      border-radius: 12px; opacity: 1;
       background: linear-gradient(to left, rgba(110,168,255,.16), transparent 78%);
     }
-    /* Finished line when the draw animation does not run. */
-    @media (prefers-reduced-motion: reduce), (max-width: 720px) {
-      .timeline-progress { transform: scaleY(1); }
-      .mod-glow { opacity: 1; }
+    /* Undrawn only when scripting can run the line. Reduced motion keeps the finished line. */
+    @media (min-width: 721px) and (prefers-reduced-motion: no-preference) {
+      .js .timeline-progress { transform: scaleY(0); }
+      .js .mod-glow { opacity: 0; }
     }
     .modules h3, .modules p { position: relative; z-index: 1; }
     .modules h3 { margin: 0 0 4px; font-size: 1.15rem; }
