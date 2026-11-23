@@ -3,170 +3,63 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- frame-ancestors is ignored in a meta CSP, and GitHub Pages cannot set
+       response headers, so clickjacking protection is not available on this host. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>מפתחי AI 16 | האוניברסיטה העברית</title>
   <meta name="description" content="קורס מפתחי AI – מחזור 16 באוניברסיטה העברית. לומדים לבנות מוצרים אמיתיים עם מודלי שפה, סוכנים ו-RAG.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #0b1020;
-      --surface: #131a2e;
-      --border: #24304f;
-      --text: #e8ecf6;
-      --muted: #a3adc6;
-      --accent: #6ea8ff;
-      --accent-2: #a78bfa;
-      --radius: 14px;
-      --max: 1100px;
-    }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      font-family: "Heebo", system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.7;
-    }
-    a { color: var(--accent); }
-    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
-    section { padding: 80px 0; }
-    h1, h2, h3 { line-height: 1.25; margin: 0 0 16px; }
-    h2 { font-size: clamp(1.7rem, 3.5vw, 2.3rem); }
-    .lead { color: var(--muted); font-size: 1.15rem; max-width: 640px; }
-
-    /* nav */
-    header.nav {
-      position: sticky; top: 0; z-index: 10;
-      background: rgba(11, 16, 32, .85);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--border);
-    }
-    header.nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
-    .logo { font-weight: 800; color: var(--text); text-decoration: none; }
-    .logo span { color: var(--accent); }
-    nav a { color: var(--muted); text-decoration: none; margin-inline-start: 22px; }
-    nav a:hover { color: var(--text); }
-    @media (max-width: 720px) { nav a:not(.btn) { display: none; } }
-
-    .btn {
-      display: inline-block; padding: 12px 26px; border-radius: 999px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: #0b1020; font-weight: 700; text-decoration: none;
-    }
-    nav .btn { padding: 8px 18px; color: #0b1020; }
-    .btn:hover { filter: brightness(1.1); }
-    .btn:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
-    .btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
-
-    /* hero */
-    .hero {
-      padding: 110px 0 90px;
-      background:
-        radial-gradient(600px 300px at 80% 0%, rgba(110,168,255,.18), transparent),
-        radial-gradient(500px 300px at 10% 30%, rgba(167,139,250,.15), transparent);
-    }
-    .hero { position: relative; overflow: hidden; }
-    .hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .55; pointer-events: none; }
-    .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; align-items: center; }
-    @media (min-width: 900px) { .hero-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); } }
-    /* on phones the network would sit under the headline; the console carries the effect there */
-    @media (max-width: 720px) { .hero-bg { display: none; } }
-    .console { min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,.35); }
-    .console-head { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--border); font: .85rem ui-monospace, Menlo, monospace; color: var(--muted); }
-    .console-head i { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
-    .console-head i:nth-child(1) { background: #ff5f57; } .console-head i:nth-child(2) { background: #febc2e; } .console-head i:nth-child(3) { background: #28c840; }
-    .console-head .live { margin-inline-start: auto; color: var(--text); }
-    .live::before { content: "●"; color: #28c840; margin-inline-end: 6px; animation: pulse 1.6s ease-in-out infinite; }
-    .console-body { min-height: 15rem; padding: 16px; font: .9rem/1.9 ui-monospace, Menlo, monospace; overflow: hidden; }
-    .console-body .tag { margin-inline-end: 8px; font-weight: 700; }
-    .cursor::after { content: "▍"; color: var(--accent); animation: blink 1s steps(1) infinite; }
-    @keyframes pulse { 50% { opacity: .25; } }
-    @keyframes blink { 50% { opacity: 0; } }
-    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-    @media (prefers-reduced-motion: reduce) { .live::before, .cursor::after { animation: none; } }
-    .badge {
-      display: inline-block; padding: 4px 14px; border-radius: 999px;
-      border: 1px solid var(--border); color: var(--muted); font-size: .9rem; margin-bottom: 20px;
-    }
-    .hero h1 { font-size: clamp(2.2rem, 6vw, 3.8rem); font-weight: 800; }
-    .grad { background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-    .hero .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
-    .facts { display: flex; gap: 40px; flex-wrap: wrap; margin-top: 56px; color: var(--muted); }
-    .facts strong { display: block; color: var(--text); font-size: 1.5rem; }
-
-    /* cards */
-    .grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 40px; }
-    .card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 26px;
-    }
-    .card .icon { font-size: 1.8rem; margin-bottom: 8px; }
-    .card p { color: var(--muted); margin: 0; }
-
-    /* syllabus */
-    .alt { background: var(--surface); }
-    .modules { list-style: none; padding: 0; margin: 40px 0 0; counter-reset: m; }
-    .modules li {
-      counter-increment: m; position: relative;
-      padding: 20px 64px 20px 0; border-bottom: 1px solid var(--border);
-    }
-    .modules li::before {
-      content: counter(m, decimal-leading-zero); position: absolute; right: 0; top: 18px;
-      font-weight: 800; font-size: 1.4rem; color: var(--accent);
-    }
-    .modules h3 { margin: 0 0 4px; font-size: 1.15rem; }
-    .modules p { margin: 0; color: var(--muted); }
-
-    /* lecturers */
-    .person { text-align: center; }
-    .avatar {
-      width: 96px; height: 96px; border-radius: 50%; margin: 0 auto 14px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      display: grid; place-items: center; font-weight: 800; font-size: 1.6rem; color: #0b1020;
-    }
-
-    /* faq */
-    details {
-      background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 18px 22px; margin-top: 12px;
-    }
-    summary { cursor: pointer; font-weight: 700; }
-    details p { color: var(--muted); margin: 12px 0 0; }
-
-    /* cta */
-    .cta { text-align: center; }
-    .cta .lead { margin: 0 auto 28px; }
-
-    footer { border-top: 1px solid var(--border); padding: 28px 0; color: var(--muted); font-size: .9rem; text-align: center; }
-  </style>
+  <meta name="color-scheme" content="dark">
+  <link rel="canonical" href="https://yossitamim.github.io/newwebsite/">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <meta property="og:title" content="מפתחי AI 16 | האוניברסיטה העברית">
+  <meta property="og:description" content="קורס מפתחי AI – מחזור 16 באוניברסיטה העברית. לומדים לבנות מוצרים אמיתיים עם מודלי שפה, סוכנים ו-RAG.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="he_IL">
+  <meta property="og:image" content="https://yossitamim.github.io/newwebsite/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="הופכים מפתחים למפתחי AI – קורס מפתחי AI, מחזור 16">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://yossitamim.github.io/newwebsite/assets/og-image.png">
+  <link rel="preload" href="assets/fonts/heebo-hebrew-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/heebo-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <script src="assets/js/js-flag.js"></script>
+  <link rel="stylesheet" href="assets/css/main.css">
 </head>
-<body>
+<!-- TODO: להחליף בקישור לטופס ההרשמה האמיתי. המקור היחיד לכל כפתורי ההרשמה: data-signup-url -->
+<body data-signup-url="#signup">
 
 <header class="nav">
-  <div class="wrap">
+  <a class="skip" href="#top">דילוג לתוכן</a>
+  <div class="wrap nav-bar">
     <a class="logo" href="#top">מפתחי <span>AI</span> 16</a>
-    <nav aria-label="ניווט ראשי">
+    <nav id="site-menu" aria-label="ניווט ראשי">
       <a href="#what">מה לומדים</a>
       <a href="#syllabus">סילבוס</a>
-      <a href="#team">מרצים</a>
+      <!-- Hidden with #team until SHOW_LECTURERS is true. -->
+      <a href="#team" data-nav-team hidden>מרצים</a>
       <a href="#faq">שאלות נפוצות</a>
-      <a class="btn" href="#signup">להרשמה</a>
     </nav>
+    <a class="btn nav-signup" data-signup href="#signup">להרשמה</a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-menu" aria-label="פתיחת תפריט">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
 
-<main id="top">
+<main id="top" tabindex="-1">
   <section class="hero">
+    <div class="hero-stage">
     <canvas class="hero-bg" aria-hidden="true"></canvas>
     <div class="wrap hero-grid">
     <div class="hero-text">
       <span class="badge">האוניברסיטה העברית · מחזור 16</span>
-      <h1>הופכים מפתחים<br>ל<span class="grad">מפתחי AI</span></h1>
+      <h1 class="hero-title">הופכים מפתחים<br>ל<span class="grad">מפתחי AI</span><span class="sweep" aria-hidden="true"></span></h1>
       <p class="lead">קורס מעשי שבו בונים מוצרים אמיתיים עם מודלי שפה: סוכנים, RAG, אינטגרציות ופריסה לפרודקשן. מהרעיון ועד מוצר עובד.</p>
       <div class="actions">
-        <a class="btn" href="#signup">להרשמה למחזור 16</a>
+        <a class="btn" data-signup href="#signup">להרשמה למחזור 16</a>
         <a class="btn ghost" href="#syllabus">לסילבוס המלא</a>
       </div>
       <div class="facts">
@@ -182,13 +75,17 @@
       <div class="console-body" aria-hidden="true"></div>
     </aside>
     </div>
+    </div>
   </section>
 
   <section id="what">
     <div class="wrap">
-      <h2>מה תדעו לעשות בסוף הקורס</h2>
-      <p class="lead">לא עוד הרצאות תיאורטיות. כל שבוע בונים משהו שעובד.</p>
-      <div class="grid">
+      <div class="what-head">
+        <h2>מה תדעו לעשות בסוף הקורס</h2>
+        <p class="lead">לא עוד הרצאות תיאורטיות. כל שבוע בונים משהו שעובד.</p>
+      </div>
+      <div class="grid what-grid">
+        <div class="spot" aria-hidden="true"></div>
         <div class="card"><div class="icon" aria-hidden="true">🧠</div><h3>לעבוד עם LLMs</h3><p>הנדסת פרומפטים, עבודה עם APIs של מודלים מובילים ובחירת מודל נכון למשימה.</p></div>
         <div class="card"><div class="icon" aria-hidden="true">🤖</div><h3>לבנות סוכנים</h3><p>סוכנים שמשתמשים בכלים, מתכננים ומבצעים משימות מרובות שלבים.</p></div>
         <div class="card"><div class="icon" aria-hidden="true">📚</div><h3>RAG ונתונים</h3><p>חיבור מודלים לידע של הארגון: embeddings, מאגרי וקטורים וחיפוש סמנטי.</p></div>
@@ -201,25 +98,41 @@
     <div class="wrap">
       <h2>מבנה הקורס</h2>
       <p class="lead">TODO: להחליף בסילבוס האמיתי של מחזור 16.</p>
-      <ol class="modules">
-        <li><h3>יסודות ה-AI הגנרטיבי</h3><p>איך מודלי שפה עובדים, טוקנים, הקשר ומגבלות.</p></li>
-        <li><h3>פיתוח עם APIs של מודלים</h3><p>פרומפטים, פלט מובנה, סטרימינג וקריאה לכלים.</p></li>
-        <li><h3>RAG</h3><p>עיבוד מסמכים, embeddings ושליפה חכמה.</p></li>
-        <li><h3>סוכנים ואוטומציה</h3><p>תכנון סוכנים, MCP ועבודה עם כלים חיצוניים.</p></li>
-        <li><h3>איכות ופרודקשן</h3><p>Evals, אבטחה, עלויות ופריסה.</p></li>
-        <li><h3>פרויקט גמר</h3><p>בניית מוצר AI מקצה לקצה והצגתו.</p></li>
-      </ol>
+      <div class="timeline">
+        <div class="timeline-track" aria-hidden="true"><span class="timeline-progress"></span></div>
+        <ol class="modules">
+          <li><span class="mod-glow" aria-hidden="true"></span><h3>יסודות ה-AI הגנרטיבי</h3><p>איך מודלי שפה עובדים, טוקנים, הקשר ומגבלות.</p></li>
+          <li><span class="mod-glow" aria-hidden="true"></span><h3>פיתוח עם APIs של מודלים</h3><p>פרומפטים, פלט מובנה, סטרימינג וקריאה לכלים.</p></li>
+          <li><span class="mod-glow" aria-hidden="true"></span><h3>RAG</h3><p>עיבוד מסמכים, embeddings ושליפה חכמה.</p></li>
+          <li><span class="mod-glow" aria-hidden="true"></span><h3>סוכנים ואוטומציה</h3><p>תכנון סוכנים, MCP ועבודה עם כלים חיצוניים.</p></li>
+          <li><span class="mod-glow" aria-hidden="true"></span><h3>איכות ופרודקשן</h3><p>Evals, אבטחה, עלויות ופריסה.</p></li>
+          <li><span class="mod-glow" aria-hidden="true"></span><h3>פרויקט גמר</h3><p>בניית מוצר AI מקצה לקצה והצגתו.</p></li>
+        </ol>
+      </div>
     </div>
   </section>
 
-  <section id="team">
+  <section class="mid-cta">
+    <div class="wrap cta">
+      <h2>מוכנים להצטרף למחזור 16?</h2>
+      <p class="lead">מספר המקומות מוגבל. השאירו פרטים ונחזור אליכם עם כל המידע.</p>
+      <a class="btn" data-signup href="#signup">להרשמה למחזור 16</a>
+    </div>
+  </section>
+
+  <!--
+    Lecturers stay in the markup but are hidden until real photos exist.
+    Re-enable: set SHOW_LECTURERS = true in the page script.
+    Photo: set img.person-photo src and alt (the lecturer's name), then remove hidden on that img.
+  -->
+  <section id="team" hidden>
     <div class="wrap">
       <h2>המרצים</h2>
       <p class="lead">TODO: שמות, תפקידים ותמונות של צוות ההוראה.</p>
       <div class="grid">
-        <div class="card person"><div class="avatar" aria-hidden="true">א</div><h3>שם המרצה</h3><p>תפקיד וניסיון בקצרה</p></div>
-        <div class="card person"><div class="avatar" aria-hidden="true">ב</div><h3>שם המרצה</h3><p>תפקיד וניסיון בקצרה</p></div>
-        <div class="card person"><div class="avatar" aria-hidden="true">ג</div><h3>שם המרצה</h3><p>תפקיד וניסיון בקצרה</p></div>
+        <div class="card person"><div class="avatar"><img class="person-photo" alt="" width="96" height="96" loading="lazy" hidden src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><span class="avatar-letter" aria-hidden="true">א</span></div><h3>שם המרצה</h3><p>תפקיד וניסיון בקצרה</p></div>
+        <div class="card person"><div class="avatar"><img class="person-photo" alt="" width="96" height="96" loading="lazy" hidden src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><span class="avatar-letter" aria-hidden="true">ב</span></div><h3>שם המרצה</h3><p>תפקיד וניסיון בקצרה</p></div>
+        <div class="card person"><div class="avatar"><img class="person-photo" alt="" width="96" height="96" loading="lazy" hidden src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><span class="avatar-letter" aria-hidden="true">ג</span></div><h3>שם המרצה</h3><p>תפקיד וניסיון בקצרה</p></div>
       </div>
     </div>
   </section>
@@ -236,12 +149,14 @@
     </div>
   </section>
 
-  <section id="signup" class="cta">
+  <section id="signup" class="cta finale">
+    <div class="signup-dim" aria-hidden="true"></div>
+    <canvas class="signup-net" aria-hidden="true"></canvas>
     <div class="wrap">
       <h2>מוכנים להצטרף למחזור 16?</h2>
       <p class="lead">מספר המקומות מוגבל. השאירו פרטים ונחזור אליכם עם כל המידע.</p>
       <!-- TODO: להחליף בקישור לטופס ההרשמה האמיתי -->
-      <a class="btn" href="#">לטופס ההרשמה</a>
+      <a class="btn finale-btn" data-signup href="#signup">לטופס ההרשמה</a>
     </div>
   </section>
 </main>
@@ -250,115 +165,10 @@
   <div class="wrap">© 2026 קורס מפתחי AI · מחזור 16 · האוניברסיטה העברית בירושלים</div>
 </footer>
 
-<script>
-(function () {
-  var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var hero = document.querySelector(".hero");
-
-  // Effect 1: agent network
-  var cv = hero.querySelector("canvas"), ctx = cv.getContext("2d");
-  // positions keep every node outside the console card on desktop
-  var nodes = [["Planner", .06, .14], ["Researcher", .26, .1], ["Coder", .3, .9], ["Tester", .1, .86], ["Deployer", .45, .84]];
-  var edges = [[0, 1], [1, 2], [2, 3], [3, 4], [0, 2], [1, 4], [4, 0]];
-  var packets = [], pulses = [], W, H, last = 0, raf, running = false;
-  var css = getComputedStyle(document.documentElement);
-  var cols = [css.getPropertyValue("--accent").trim(), css.getPropertyValue("--accent-2").trim()];
-  var pos = function (n) { return [nodes[n][1] * W, nodes[n][2] * H]; };
-
-  function spawn(from) {
-    var out = edges.map(function (e, i) { return from == null || e[0] === from ? i : -1; }).filter(function (i) { return i >= 0; });
-    packets.push({ e: out[Math.random() * out.length | 0], t: 0, c: cols[Math.random() * 2 | 0] });
-  }
-  function resize() {
-    var d = window.devicePixelRatio || 1;
-    W = cv.clientWidth; H = cv.clientHeight;
-    cv.width = W * d; cv.height = H * d;
-    ctx.setTransform(d, 0, 0, d, 0, 0);
-    if (!running) draw();
-  }
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-    ctx.lineWidth = 1; ctx.strokeStyle = css.getPropertyValue("--border").trim();
-    edges.forEach(function (e) {
-      var a = pos(e[0]), b = pos(e[1]);
-      ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
-    });
-    pulses.forEach(function (p) {
-      var c = pos(p.n); ctx.globalAlpha = 1 - p.t;
-      ctx.strokeStyle = cols[0]; ctx.beginPath(); ctx.arc(c[0], c[1], 8 + p.t * 28, 0, 7); ctx.stroke();
-    });
-    ctx.globalAlpha = 1; ctx.font = "12px ui-monospace, Menlo, monospace"; ctx.textAlign = "center";
-    nodes.forEach(function (n, i) {
-      var c = pos(i);
-      ctx.fillStyle = css.getPropertyValue("--surface").trim(); ctx.strokeStyle = cols[1];
-      ctx.beginPath(); ctx.arc(c[0], c[1], 8, 0, 7); ctx.fill(); ctx.stroke();
-      ctx.fillStyle = css.getPropertyValue("--muted").trim(); ctx.fillText(n[0], c[0], c[1] + 26);
-    });
-    packets.forEach(function (p) {
-      var a = pos(edges[p.e][0]), b = pos(edges[p.e][1]);
-      ctx.shadowColor = p.c; ctx.shadowBlur = 12; ctx.fillStyle = p.c;
-      ctx.beginPath(); ctx.arc(a[0] + (b[0] - a[0]) * p.t, a[1] + (b[1] - a[1]) * p.t, 3.5, 0, 7); ctx.fill();
-    });
-    ctx.shadowBlur = 0;
-  }
-  function tick(now) {
-    var dt = Math.min(now - last, 50); last = now;
-    packets.slice().forEach(function (p) {
-      p.t += dt / 1800;
-      if (p.t >= 1) {
-        var n = edges[p.e][1];
-        packets.splice(packets.indexOf(p), 1);
-        pulses.push({ n: n, t: 0 }); spawn(n);
-      }
-    });
-    if (packets.length < 4) spawn();
-    if (packets.length < 8 && Math.random() < .004) spawn();
-    pulses.forEach(function (p) { p.t += dt / 900; });
-    pulses = pulses.filter(function (p) { return p.t < 1; });
-    draw();
-    raf = requestAnimationFrame(tick);
-  }
-  window.addEventListener("resize", resize);
-  resize();
-  if (!still) {
-    for (var i = 0; i < 5; i++) spawn();
-    new IntersectionObserver(function (en) {
-      running = en[0].isIntersecting;
-      cancelAnimationFrame(raf);
-      if (running) { last = performance.now(); raf = requestAnimationFrame(tick); }
-    }).observe(cv); // a hidden canvas never intersects, so the loop stays off on phones
-  }
-
-  // Effect 2: typing console
-  var body = hero.querySelector(".console-body");
-  var lines = [
-    ["planner", "var(--accent)", "מפרק את המשימה ל-4 שלבים…"],
-    ["researcher", "var(--accent-2)", "שולף 12 מסמכים רלוונטיים (RAG)"],
-    ["coder", "#fbbf24", "כותב את שכבת ה-API…"],
-    ["tester", "#34d399", "✓ 24 בדיקות עברו"],
-    ["deployer", "#f472b6", "🚀 הגרסה עלתה לאוויר"]
-  ];
-  function row(l) {
-    var d = document.createElement("div"), t = document.createElement("span"), m = document.createElement("span");
-    d.dir = "rtl"; t.className = "tag"; t.style.color = l[1]; t.textContent = "[" + l[0] + "]";
-    d.append(t, m); body.append(d);
-    return [d, m];
-  }
-  function play(i) {
-    if (i === lines.length) return setTimeout(function () { body.textContent = ""; play(0); }, 2500);
-    var r = row(lines[i]), msg = lines[i][2], k = 0;
-    r[0].classList.add("cursor");
-    (function type() {
-      r[1].textContent = msg.slice(0, ++k);
-      if (k < msg.length) return setTimeout(type, 40);
-      r[0].classList.remove("cursor");
-      setTimeout(function () { play(i + 1); }, 500);
-    })();
-  }
-  if (still) lines.forEach(function (l) { row(l)[1].textContent = l[2]; });
-  else play(0);
-})();
-</script>
+<!-- GSAP 3.15.1 vendored locally. See vendor/gsap/LICENSE. -->
+<script src="vendor/gsap/gsap.min.js" defer></script>
+<script src="vendor/gsap/ScrollTrigger.min.js" defer></script>
+<script src="assets/js/main.js" defer></script>
 
 </body>
 </html>
